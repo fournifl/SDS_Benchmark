@@ -4,12 +4,12 @@
   "sentiline_results_dir": "{working_dir}/sentiline_results/{site}/",
   "satellites": ["Landsat_5", "Landsat_7", "Landsat_8", "Landsat_9", "Sentinel_2"],
   "shoreline_results_file": "{sentiline_results_dir}/{sat}/shoreline_results.gpkg",
-  "output_dir": "/home/florent/Projects/benchmark_satellite_coastlines/deliverable/",
+  "output_dir": "/home/florent/Projects/benchmark_satellite_coastlines/deliverable/{site}/",
   "transects": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_transects.geojson",
   "epsg_transects": 28356,
   "d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect": 100,
-  "tide": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_tides.csv",
-  "average_beach_slope_tan_beta": 0.11,
-  "apply_tide_correction": false,
-  "apply_wave_setup_correction": false
+  "tide_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_tides.csv",
+  "average_beach_slope_tan_beta": 0.1,
+  "apply_tide_correction": true,
+  "apply_tide_correction_and_wave_setup_correction": false
 }
