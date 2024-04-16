@@ -6,6 +6,8 @@ import fiona
 import geopandas as gpd
 import pandas as pd
 from scipy import spatial
+from scipy.interpolate import interp1d
+import matplotlib.pyplot as plt
 
 from geo_utils import (check_if_transect_is_surrounded_by_shoreline_pts, compute_transect_points)
 
@@ -49,8 +51,9 @@ transects = transects.to_crs(int(settings['epsg_transects']))
 
 # water level
 if apply_tide_correction:
-    tide = pd.read_csv(settings['tide_file'].format(site=settings['site']))
-
+    tide = pd.read_csv(settings['tide_file'].format(site=settings['site']), usecols=['dates', 'tides'])
+    tide['dates'] = pd.to_datetime(tide['dates'])
+    tide['julian_dates'] = [t.to_julian_date() for t in tide['dates']]
 
 # satellites' abbreviations
 sat_abbreviations = {'Landsat_5': 'L5', 'Landsat_7': 'L7', 'Landsat_8': 'L8', 'Landsat_9': 'L9', 'Sentinel_2': 'S2'}
@@ -64,7 +67,7 @@ for ind_transect, transect in enumerate(transects.geometry):
     # compute transect
     transect_line, transect_points, transect_coords, transect_cross_shore_d = compute_transect_points(transect)
 
-    for sat in settings['satellites']:
+    for sat in (settings['satellites'][0:1]):
         # shoreline of a given sat
         shoreline_results_file = settings['shoreline_results_file'].format(sentiline_results_dir=sentiline_results_dir,
                                                                            sat=sat)
@@ -74,7 +77,7 @@ for ind_transect, transect in enumerate(transects.geometry):
         shoreline = shoreline.to_crs(int(settings['epsg_transects']))
 
         # parse shorelines at every date
-        for i, shorelines in enumerate(shoreline.geometry):
+        for i, shorelines in enumerate(shoreline.geometry[0:3]):
             print(transects.name[ind_transect], sat, shoreline['date'][i])
             # if shorleine['valid'][i]:
 
@@ -98,14 +101,6 @@ for ind_transect, transect in enumerate(transects.geometry):
                             pt_transect_intersection_with_shoreline = transect_points[indice_pt_transect_intersection_with_shoreline]
                             cross_shore_d = transect_cross_shore_d[indice_pt_transect_intersection_with_shoreline]
 
-                            # tidal correction
-                            if apply_tide_correction:
-                                pdb.set_trace()
-                                # delta_cross_sh_d_from_wl = (sl['water_level'][i] - attrs['msl_ref_ign69']) \
-                                #                            / np.tan(beach_slope)
-                                # sl_cross_sh_d[stack].append(np.around(transect_cross_sh_d[stack][id_p], decimals=2) +
-                                #                             delta_cross_sh_d_from_wl)
-
                             # fill in a new element in dictionnary of extracted beach width
                             data['dates'].append(shoreline['date'][i])
                             data['beach_width'].append(cross_shore_d)
@@ -113,6 +108,31 @@ for ind_transect, transect in enumerate(transects.geometry):
 
     # store data extraction in a dataframe
     df = pd.DataFrame.from_dict(data)
+
+    # tidal correction on beach width
+    if apply_tide_correction:
+        # TODO  get beach slope (teta) closest to the considered shoreline date, or better, interpolate the beach slope !
+        #  and convert it to relative to survey datum following this:
+        pdb.set_trace()
+        # get water level from fes, corresponding to the considered shoreline date, doing an interpolation
+        function_interpolation = interp1d(tide['julian_dates'], tide['tides'], bounds_error=False)
+        df['julian_dates'] = [t.to_julian_date() for t in df['dates']]
+        df['tide'] = function_interpolation(df['julian_dates'])
+
+
+        '''
+        delta_water_level = water_level_fes + settings['msl_relative_to_survey_datum']
+        h = h + delta_water_level
+        '''
+        """
+        apply horizontal correction on beach width
+        delta_x = h / tan(teta)
+        beach_width = beach_width + delta_x
+        """
+        # delta_cross_sh_d_from_wl = (sl['water_level'][i] - attrs['msl_ref_ign69']) \
+        #                            / np.tan(beach_slope)
+        # sl_cross_sh_d[stack].append(np.around(transect_cross_sh_d[stack][id_p], decimals=2) +
+        #                             delta_cross_sh_d_from_wl)
 
     # rename column 'beach width' to transect name
     transect_name = transects.name[ind_transect]
