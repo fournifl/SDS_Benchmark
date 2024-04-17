@@ -9,7 +9,9 @@
   "epsg_transects": 28356,
   "d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect": 100,
   "tide_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_tides.csv",
+  "groundtruth_slope_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_groundtruth_MSL.pkl",
   "average_beach_slope_tan_beta": 0.1,
+  "msl_relative_to_survey_datum": 0,
   "apply_tide_correction": true,
   "apply_tide_correction_and_wave_setup_correction": false
 }
