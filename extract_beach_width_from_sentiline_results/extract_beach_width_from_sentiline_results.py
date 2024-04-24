@@ -92,8 +92,8 @@ for ind_transect, transect in enumerate(transects.geometry):
         # shoreline of a given sat
         shoreline_results_file = settings['shoreline_results_file'].format(sentiline_results_dir=sentiline_results_dir,
                                                                            sat=sat)
-        shoreline = gpd.read_file(shoreline_results_file)
-        # shoreline = read_gdpk_multilayer(shoreline_results_file)
+        # shoreline = gpd.read_file(shoreline_results_file)
+        shoreline = read_gdpk_multilayer(shoreline_results_file)
         print('shoreline is read')
 
         # convert shoreline to epsg of study site
@@ -104,40 +104,45 @@ for ind_transect, transect in enumerate(transects.geometry):
         # shoreline = shoreline.loc[254:255]
         # shoreline = shoreline.reset_index(drop=True)
 
-
         # parse shorelines at every date and get the corresponding beach width at transect
         for i, shorelines in enumerate(shoreline.geometry):
             print(transects.name[ind_transect], sat, shoreline['date'][i])
             if 'valid' in shoreline.keys():
                 if shoreline['valid'][i]:
-                    if shorelines is not None:
-                        # parse every shoreline at a given date
-                        for line in shorelines.geoms:
+                    valid_condition = True
+                else:
+                    valid_condition = False
+            else:
+                valid_condition = True
 
-                            # compute intersection between shoreline and transect
-                            intersect = line.intersection(transect_line)
+            if valid_condition:
+                if shorelines is not None:
+                    # parse every shoreline at a given date
+                    for line in shorelines.geoms:
 
-                            # if intersection, compute beach width
-                            if hasattr(intersect, 'x'):
-                                sl_points_near_transect = check_if_transect_is_surrounded_by_shoreline_pts(
-                                    line, transect_line, intersect,
-                                    circle_radius=settings['d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect'])
+                        # compute intersection between shoreline and transect
+                        intersect = line.intersection(transect_line)
 
-                                # get beach width if intersection point is surrounded by shoreline points on both sides of transect
-                                if sl_points_near_transect:
-                                    indice_pt_transect_intersection_with_shoreline = spatial.KDTree(transect_coords).query(
-                                        [intersect.x, intersect.y])[1]
-                                    pt_transect_intersection_with_shoreline = transect_points[indice_pt_transect_intersection_with_shoreline]
-                                    cross_shore_d = transect_cross_shore_d[indice_pt_transect_intersection_with_shoreline]
+                        # if intersection, compute beach width
+                        if hasattr(intersect, 'x'):
+                            sl_points_near_transect = check_if_transect_is_surrounded_by_shoreline_pts(
+                                line, transect_line, intersect,
+                                circle_radius=settings['d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect'])
 
-                                    # fill in a new element in dictionnary of extracted beach width
-                                    data['dates'].append(shoreline['date'][i])
-                                    data['beach_width'].append(cross_shore_d)
-                                    data['satname'].append(sat_abbreviations[sat])
+                            # get beach width if intersection point is surrounded by shoreline points on both sides of transect
+                            if sl_points_near_transect:
+                                indice_pt_transect_intersection_with_shoreline = spatial.KDTree(transect_coords).query(
+                                    [intersect.x, intersect.y])[1]
+                                pt_transect_intersection_with_shoreline = transect_points[indice_pt_transect_intersection_with_shoreline]
+                                cross_shore_d = transect_cross_shore_d[indice_pt_transect_intersection_with_shoreline]
+
+                                # fill in a new element in dictionnary of extracted beach width
+                                data['dates'].append(shoreline['date'][i])
+                                data['beach_width'].append(cross_shore_d)
+                                data['satname'].append(sat_abbreviations[sat])
 
     # store data extraction in a dataframe
     df = pd.DataFrame.from_dict(data)
-
     # tidal correction on beach width
     if apply_tide_correction:
 
