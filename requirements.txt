@@ -1,0 +1,8 @@
+numpy
+pandas
+geopandas
+scipy
+netCDF4
+matplotlib
+beautifulsoup4
+wget
