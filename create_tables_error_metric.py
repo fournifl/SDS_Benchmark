@@ -18,7 +18,7 @@ print(df)
 df.style\
     .background_gradient(cmap="RdYlGn_r", subset=["STD Landsat (m)", "STD S2 (m)"], vmin=5, vmax=30)\
     .background_gradient(cmap="RdYlGn_r", subset=["RMSE Landsat (m)", "RMSE S2 (m)"], vmin=6, vmax=40)\
-    .background_gradient(cmap="RdYlGn", subset=["R2 Landsat", "R2 S2"], vmin=0, vmax=1)\
+    .background_gradient(cmap="RdYlGn", subset=["R2 Landsat", "R2 S2"], vmin=0, vmax=0.8)\
     .background_gradient(cmap="RdYlGn_r", subset=["abs_bias_landsat"], vmin=0, vmax=40)\
     .background_gradient(cmap="RdYlGn_r", subset=["abs_bias_s2"], vmin=0, vmax=40).highlight_null('white').to_excel("table_test.xlsx")\
 
