@@ -1,0 +1,17 @@
+{
+  "working_dir": "/home/florent/Projects/benchmark_satellite_coastlines/",
+  "site": "TORREYPINES",
+  "sentiline_results_dir": "{working_dir}/sentiline_results/{site}/",
+  "satellites": ["Landsat_5", "Landsat_7", "Landsat_8", "Landsat_9"],
+  "shoreline_results_file": "{sentiline_results_dir}/{sat}/shoreline_results.gpkg",
+  "output_dir": "/home/florent/Projects/benchmark_satellite_coastlines/deliverable/{site}/",
+  "transects": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_transects.geojson",
+  "epsg_transects": 26946,
+  "d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect": 100,
+  "tide_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_tides.csv",
+  "groundtruth_slope_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_groundtruth_MSL.pkl",
+  "average_beach_slope_tan_beta": 0.045,
+  "msl_relative_to_survey_datum": 0.774,
+  "apply_tide_correction": true,
+  "apply_tide_correction_and_wave_setup_correction": false
+}
