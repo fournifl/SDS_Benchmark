@@ -316,11 +316,17 @@ def compare_timeseries2(ts,gt,key,settings):
     dates_sur = [gt[key]['dates'][k] for k in np.where(~idx_nan)[0]]
     chain_sur_dm = chain_sur_dm[~idx_nan]
 
+    # order in time
+    inds_sort_date = np.argsort(np.array(dates_sur))
+    dates_sur = np.array(dates_sur)[inds_sort_date]
+    chain_sur_dm = chain_sur_dm[inds_sort_date]
+
     # plot the time-series
     fig= plt.figure(figsize=[15,8], tight_layout=True)
     gs = gridspec.GridSpec(2,3)
     ax0 = fig.add_subplot(gs[0,:])
-    ax0.grid(b=True,which='major',linestyle=':',color='0.5')
+    # ~ ax0.grid(b=True,which='major',linestyle=':',color='0.5')
+    ax0.grid(True)
     ax0.plot(dates_sur, chain_sur_dm,'C1-',label='in situ')
     ax0.plot(dates_nonans, chain_sat_dm,'C0-',label='satellite')
     date_start = np.max([dates_sur[0],dates_nonans[0]])
