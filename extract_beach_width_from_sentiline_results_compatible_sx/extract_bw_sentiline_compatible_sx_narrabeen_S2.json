@@ -1,0 +1,10 @@
+{
+  "site": "NARRABEEN",
+  "mission": "Sentinel_2",
+  "dir_wl": "/home/florent/Projects/benchmark_satellite_coastlines/sentiline_results/{site}/{mission}_coregistered/",
+  "output_dir": "/home/florent/Projects/benchmark_satellite_coastlines/deliverable_comp_sx/{mission}/{site}/",
+  "transects": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_transects.geojson",
+  "epsg_site": 32756,
+  "d_threshold_transect_pt_intersect_with_sl_points_each_side_of_transect": 100,
+  "tide_file": "/home/florent/dev/SDS_Benchmark/datasets/{site}/{site}_tides.csv"
+}
